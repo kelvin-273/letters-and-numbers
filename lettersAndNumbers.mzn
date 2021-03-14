@@ -9,7 +9,7 @@ int: target;
 % Binary Tree
 set of int: N_opt = {0} union N; % These sets are for values in
 set of int: M_opt = {0} union M; % the arrays
-enum Tokens = {Val, Add, Sub, Mul, Null};
+enum Tokens = {Val, Add, Sub, Mul, Div, Null};
 
 array[M] of var Tokens: tree;
 array[M] of var M_opt: left;
@@ -84,6 +84,10 @@ constraint forall (i in M) (
   (tree[i] == Add -> tree_vals[i] = tree_vals[left[i]] + tree_vals[right[i]]) /\
   (tree[i] == Sub -> tree_vals[i] = tree_vals[left[i]] - tree_vals[right[i]]) /\
   (tree[i] == Mul -> tree_vals[i] = tree_vals[left[i]] * tree_vals[right[i]]) /\
+  (tree[i] == Div -> (
+    tree_vals[i] = tree_vals[left[i]] div tree_vals[right[i]] /\
+    tree_vals[left[i]] mod tree_vals[right[i]] == 0
+  )) /\
   (tree[i] == Null -> tree_vals[i] = 0)
 );
 
