@@ -70,7 +70,7 @@ predicate is_unused(var M: i) = (
   (tree[i] = Null \/ tree[i] = Val) /\
   left[i] = 0 /\
   right[i] = 0 /\
-  (tree[i] = Val -> indexes[i] = i) /\
+  (tree[i] = Val -> indexes[i] != 0) /\
   (tree[i] = Null -> indexes[i] = 0) /\
   lowest[i] = 0 /\
   highest[i] = 0 /\
@@ -124,4 +124,4 @@ constraint symmetry_breaking_constraint(
 
 
 solve :: int_search([used], input_order, indomain_min)
-  minimize abs(tree_vals[1] - target);
+  minimize 10*abs(tree_vals[1] - target) + used;
