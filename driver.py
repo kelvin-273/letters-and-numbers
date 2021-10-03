@@ -8,6 +8,7 @@ expression formed by the solution.
 
 import sys
 import subprocess
+import letters_and_numbers as lan
 
 if len(sys.argv) < 3:
     raise ValueError("Not enough args given")

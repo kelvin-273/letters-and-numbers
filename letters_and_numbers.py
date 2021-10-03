@@ -1,14 +1,16 @@
 import sys
 import json
 import itertools
+import subprocess
+import collections
 
-def gen_solutions():
+def gen_solutions(stdin=sys.stdin):
     sol_str = ''
-    for i, line in enumerate(sys.stdin):
-        if line == '----------\n' and sol_str != '':
+    for i, line in enumerate(stdin):
+        if line.strip() == '----------' and sol_str != '':
             yield json.loads(sol_str)
             sol_str = ''
-        elif line == '----------\n' and sol_str == '':
+        elif line.strip() == '----------' and sol_str == '':
             pass
         else:
             sol_str += line
@@ -133,5 +135,29 @@ def format_sol(d: dict):
 
     return aux(0) + ' = ' + str(d['tree_vals'][0])
 
-for d in gen_solutions():
-    print(format_sol(d))
+
+def distance_from_target(target: int, d: dict):
+    return abs(target - d['tree_vals'][0])
+
+
+def last(iterable, n=1):
+    return iter(collections.deque(iterable, maxlen=n))
+
+
+def run_solver(numbers, target):
+    proc_minizinc = subprocess.Popen([
+        'minizinc',
+        'lettersAndNumbers.mzn',
+        '-D', f'n = {len(numbers)}; numbers = {numbers}; target = {target}',
+        '--output-mode', 'json',
+        '--all-solutions',
+    ], stdout=subprocess.PIPE)
+    stdout, stderr = proc_minizinc.communicate()
+    return gen_solutions(
+        stdout.decode('utf-8').splitlines()
+    )
+
+
+if __name__ == "__main__":
+    for d in gen_solutions():
+        print(format_sol(d))
