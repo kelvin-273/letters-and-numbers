@@ -78,7 +78,7 @@ predicate is_unused(var M: i) = (
 );
 
 % Tree subtree values
-array[M] of var 0..1000: tree_vals;
+array[M] of var -10000..10000: tree_vals;
 constraint forall (i in M) (
   (tree[i] == Val -> tree_vals[i] = numbers[indexes[i]]) /\
   (tree[i] == Add -> tree_vals[i] = tree_vals[left[i]] + tree_vals[right[i]]) /\
@@ -92,36 +92,6 @@ constraint forall (i in M) (
 );
 
 /*constraint tree_vals[1] = target;*/
-
-%/**
-% * Break Symmetry
-% */
-
-% string of additions and subtractions must be associative in one direction
-% the values of the string must be in sorted order
-
-constraint symmetry_breaking_constraint(
-  forall (i in M) (
-    (tree[i] = Add -> tree[left[i]] != Add) /\
-    (tree[i] = Sub -> tree[left[i]] != Sub) /\
-    (tree[i] = Mul -> tree[left[i]] != Mul) /\
-    ((tree[i] = Add /\ tree[right[i]] = Val) -> tree[left[i]] = Val) /\
-    ((tree[i] = Mul /\ tree[right[i]] = Val) -> tree[left[i]] = Val) /\
-    ((tree[i] = Add /\ tree[right[i]] = Val) -> tree[left[i]] = Val) /\
-    ((tree[i] = Add /\ tree[left[i]] = Val /\ tree[right[i]] = Val) ->
-      indexes[left[i]] < indexes[right[i]]) /\
-    ((tree[i] = Mul /\ tree[left[i]] = Val /\ tree[right[i]] = Val) ->
-      indexes[left[i]] < indexes[right[i]]) /\
-    ((tree[i] = Add /\ tree[left[i]] = Val /\ tree[right[i]] = Add /\
-      tree[left[right[i]]] = Val) ->
-      indexes[left[i]] < indexes[left[right[i]]]) /\
-    ((tree[i] = Mul /\ tree[left[i]] = Val /\ tree[right[i]] = Mul /\
-      tree[left[right[i]]] = Val) ->
-      indexes[left[i]] < indexes[left[right[i]]]) /\
-    true
-  )
-);
-
 
 solve :: int_search([used], input_order, indomain_min)
   minimize 10*abs(tree_vals[1] - target) + used;

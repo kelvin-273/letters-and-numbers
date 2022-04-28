@@ -19,6 +19,7 @@ TARGET = int(sys.argv[-1])
 proc_minizinc = subprocess.Popen([
     'minizinc',
     'lettersAndNumbers.mzn',
+    'lettersAndNumbers_symmetryBreaking.mzn',
     '-D', f'n = {len(NUMBERS)}; numbers = {NUMBERS}; target = {TARGET}',
     '--output-mode', 'json',
     '--all-solutions',
